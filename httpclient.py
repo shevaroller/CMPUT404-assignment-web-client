@@ -93,8 +93,33 @@ class HTTPClient(object):
         return HTTPResponse(code, body)
 
     def POST(self, url, args=None):
-        code = 500
-        body = ""
+        host, port = self.get_host_port(url)
+        socket = self.connect(host, port)
+        parsedUrl = urlparse(url)
+        if args != None:
+            reqBodyArray = []
+            for arg in args.iteritems():
+                reqBodyArray.append(str(arg[0]) + "=" + str(arg[1]))
+            reqBody = '&'.join(reqBodyArray)
+        elif len(parsedUrl.query) > 0:
+            reqBody = parsedUrl.query
+        else:
+            reqBody = ''
+        reqHeader = "POST "
+        reqHeader += parsedUrl.path
+        reqHeader += " HTTP/1.1\r\n"
+        reqHeader += "Host: " + parsedUrl.netloc + "\r\n"
+        reqHeader += "Content-Type: application/x-www-form-urlencoded\r\n"
+        reqHeader += "Content-Length: " + str(len(reqBody)) + "\r\n\r\n"
+        request = reqHeader + reqBody
+        try:
+            socket.sendall(request)
+            data = self.recvall(socket)
+            code = int(self.get_code(data))
+            body = self.get_body(data)
+        except:
+            code = 500
+            body = ''
         return HTTPResponse(code, body)
 
     def command(self, url, command="GET", args=None):
