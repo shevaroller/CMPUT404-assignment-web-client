@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # coding: utf-8
 # Copyright 2016 Abram Hindle, https://github.com/tywtyw2002, and https://github.com/treedust
-# 
+# Modifications copyright 2016 Oleksii Shevchenko (shevaroller.me)
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -32,6 +33,7 @@ class HTTPResponse(object):
     def __init__(self, code=200, body=""):
         self.code = code
         self.body = body
+        print body
 
 class HTTPClient(object):
     def get_host_port(self,url):
